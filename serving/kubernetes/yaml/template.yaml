@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{deployment_name}}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: {{deployment_name}}
+  template:
+    metadata:
+      labels:
+        app: {{deployment_name}}
+    spec:
+     initContainers:
+     - name: init-model
+       image: huythai855/rain-prediction  # Dùng một image có sẵn Python để tải mô hình
+       command: [
+         "sh",
+         "-c",
+#          "custom_model custom_model --model-url {{model_url}}  --path ./models"
+       ]
+       volumeMounts:
+       - name: model-volume
+         mountPath: /models
+      containers:
+      - name: {{deployment_name}}
+        image: {{image_url}}
+        ports:
+        - containerPort: {{port}}
+        livenessProbe:
+          httpGet:
+            path: /health_check
+            port: {{port}}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health_check
+            port: {{port}}
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        volumeMounts:
+        - name: model-volume
+          mountPath: /models
+      volumes:
+      - name: model-volume
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{deployment_name}}-service
+spec:
+  selector:
+    app: {{deployment_name}}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: {{port}}
+  type: LoadBalancer
