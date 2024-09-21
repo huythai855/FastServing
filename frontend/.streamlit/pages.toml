@@ -1,0 +1,27 @@
+[[pages]]
+path = "pages/dashboard.py"
+name = "FastServing"
+url_path = "homepage"
+icon = ":fire:"
+
+[[pages]]
+path = "pages/create.py"
+name = "Create a new deployment"
+url_path = "create"
+icon = "➕"
+
+
+
+[[pages]]
+path = "pages/list.py"
+name = "List deployments"
+url_path = "list"
+icon = "📋"
+
+
+[[pages]]
+path = "pages/detail.py"
+name = "Detail deployment"
+url_path = "detail"
+icon = "📊"
+
